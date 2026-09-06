@@ -11,11 +11,9 @@ from weather_api import get_weather_data
 sys.path.append(os.path.join(os.path.dirname(__file__), 'e-Paper/RaspberryPi_JetsonNano/python/lib'))
 from waveshare_epd import epd2in13b_V4
 
-# Initialize the display and clear it
+# Initialize the display
 print("Initializing display...")
 epd = epd2in13b_V4.EPD()
-epd.init()
-epd.Clear()
 
 # Prepare canvas for drawing
 image_black = Image.new('1', (epd.height, epd.width), 255)
@@ -57,25 +55,29 @@ def update_display():
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
                         draw_black.rectangle((124, 0, 125, epd.width), fill=0) # Divider line
+                        draw_black.rectangle((0, epd.width, epd.height, epd.width), fill=0) # Bottom bar
 
                         # Left Side: Temperature, Pressure, Humidity
                         if temperature >= 80:
                                 draw_red.text((20, 10), f"{temperature:.0f} {symbol}", fill=0, font=font)
                         else:
                                 draw_black.text((20, 10), f"{temperature:.0f} {symbol}", fill=0, font=font)
-                        draw_black.text((5, 80), f"Humidity: {humidity:.2f} %", fill=0)
-                        draw_black.text((5, 90), f"Pressure: {pressure:.2f} hPa", fill=0)
-                        draw_red.text((5, 110), "Indoor Conditions", fill=0)
+                        draw_black.text((5, 60), f"Humidity: {humidity:.2f} %", fill=0)
+                        draw_black.text((5, 70), f"Pressure: {pressure:.2f} hPa", fill=0)
+                        draw_red.text((5, 90), "Indoors", fill=0)
 
                         # Right Side: Outdoor Conditions
                         if weather_temp is not None:
                                 draw_red.text((135, 10), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
-                        draw_black.text((135, 70), f"Cond: {weather_conditions} 󰖙", fill=0)
+                        draw_black.text((135, 50), f"{weather_conditions}", fill=0)
                         if weather_high is not None:
-                                draw_black.text((135, 85), f"High: {weather_high:.0f} {symbol}", fill=0)
+                                draw_black.text((135, 70), f"High: {weather_high:.0f} {symbol}", fill=0)
                         if weather_low is not None:
-                                draw_black.text((135, 95), f"Low: {weather_low:.0f} {symbol}", fill=0)
-                        draw_red.text((135, 110), "Outdoor Conditions", fill=0)
+                                draw_black.text((175, 70), f"Low: {weather_low:.0f} {symbol}", fill=0)
+                        draw_red.text((135, 90), "Outdoors", fill=0)
+
+                        # Button Prompt
+                        draw_black.text((5, 110), "Push button to trigger screen refresh", fill=0)
 
                         # Rotate canvas from portrait to landscape
                         image_black_rotated = image_black.rotate(90, expand=True)
