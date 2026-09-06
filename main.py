@@ -31,27 +31,6 @@ button = Button(16)
 with open("config.toml", "rb") as f:
     data = tomllib.load(f)
 
-def draw_weather_icon(draw, condition, x, y):
-        condition = condition.lower()
-        if any(word in condition for word in ("rain", "drizzle", "shower")):
-                draw.ellipse((x + 4, y, x + 25, y + 14), outline=0, fill=255)
-                draw.rectangle((x + 4, y + 7, x + 25, y + 14), fill=255)
-                for offset in (7, 15, 23):
-                        draw.line((x + offset, y + 16, x + offset - 3, y + 23), fill=0, width=2)
-        elif any(word in condition for word in ("snow", "sleet", "ice")):
-                draw.ellipse((x + 4, y, x + 25, y + 14), outline=0, fill=255)
-                draw.rectangle((x + 4, y + 7, x + 25, y + 14), fill=255)
-                for offset in (7, 15, 23):
-                        draw.text((x + offset, y + 13), "*", fill=0)
-        elif any(word in condition for word in ("cloud", "overcast", "partly")):
-                draw.ellipse((x + 2, y + 8, x + 18, y + 22), outline=0, fill=255)
-                draw.ellipse((x + 10, y + 3, x + 28, y + 22), outline=0, fill=255)
-                draw.rectangle((x + 2, y + 14, x + 28, y + 22), outline=0, fill=255)
-        else:
-                draw.ellipse((x + 7, y + 5, x + 25, y + 23), outline=0, fill=255)
-                for dx, dy in ((16, 0), (16, 28), (3, 4), (29, 4), (3, 22), (29, 22)):
-                        draw.line((x + 16, y + 14, x + dx, y + dy), fill=0, width=2)
-
 def update_display():
                         print("\nUpdating display...")
 
@@ -91,9 +70,7 @@ def update_display():
                         # Right Side: Outdoor Conditions
                         if weather_temp is not None:
                                 draw_red.text((135, 10), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
-                        draw_black.text((135, 70), f"Cond: {weather_conditions}", fill=0)
-                        draw_weather_icon(draw_black, weather_conditions, 215, 35)
-                        
+                        draw_black.text((135, 70), f"Cond: {weather_conditions} 󰖙", fill=0)
                         if weather_high is not None:
                                 draw_black.text((135, 85), f"High: {weather_high:.0f} {symbol}", fill=0)
                         if weather_low is not None:
