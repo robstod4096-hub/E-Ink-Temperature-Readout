@@ -78,7 +78,7 @@ def update_display():
                         draw_red.text((135, 90), "Outdoors", fill=0)
 
                         # Button Prompt
-                        draw_black.text((5, 110), "Old data. Hold button to update.", fill=0)
+                        draw_black.text((5, 110), "Displaying old data. Hold button to update.", fill=0)
 
                         # Rotate canvas from portrait to landscape
                         image_black_rotated = image_black.rotate(90, expand=True)
