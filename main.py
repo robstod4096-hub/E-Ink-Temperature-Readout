@@ -54,12 +54,13 @@ def update_display():
         
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw_black.rectangle((124, 0, 125, epd.width), fill=0) # Divider line
-                        draw_black.rectangle((0, epd.width, epd.height, epd.width), fill=0) # Bottom bar
+                        draw_black.rectangle((124, 0, 125, 105), fill=0) # Divider line
+                        draw_black.rectangle((0, 85, epd.height, 86), fill=0)
+                        draw_black.rectangle((0, 105, epd.height, 106), fill=0) # Bottom bar
 
                         # Left Side: Temperature, Pressure, Humidity
                         if temperature >= 80:
-                                draw_red.text((20, 10), f"{temperature:.0f} {symbol}", fill=0, font=font)
+                                draw_red.text((20, 5), f"{temperature:.0f} {symbol}", fill=0, font=font)
                         else:
                                 draw_black.text((20, 10), f"{temperature:.0f} {symbol}", fill=0, font=font)
                         draw_black.text((5, 60), f"Humidity: {humidity:.2f} %", fill=0)
@@ -68,12 +69,12 @@ def update_display():
 
                         # Right Side: Outdoor Conditions
                         if weather_temp is not None:
-                                draw_red.text((135, 10), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
-                        draw_black.text((135, 50), f"{weather_conditions}", fill=0)
+                                draw_red.text((135, 5), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
+                        draw_black.text((135, 60), f"{weather_conditions}", fill=0)
                         if weather_high is not None:
-                                draw_black.text((135, 70), f"High: {weather_high:.0f} {symbol}", fill=0)
+                                draw_black.text((135, 70), f"H: {weather_high:.0f} {symbol}", fill=0)
                         if weather_low is not None:
-                                draw_black.text((175, 70), f"Low: {weather_low:.0f} {symbol}", fill=0)
+                                draw_black.text((185, 70), f"L: {weather_low:.0f} {symbol}", fill=0)
                         draw_red.text((135, 90), "Outdoors", fill=0)
 
                         # Button Prompt
