@@ -9,6 +9,7 @@ cursor.execute('''
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         temperature REAL,
         humidity REAL
+        outdoor_temp REAL
     )
 ''')
 

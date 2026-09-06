@@ -8,7 +8,7 @@ def get_24hr_data():
     cursor = conn.cursor()
     # Query logs from the last 24 hours only
     cursor.execute('''
-        SELECT timestamp, temperature, humidity 
+        SELECT timestamp, temperature, humidity, outdoor_temp 
         FROM readings 
         WHERE timestamp >= datetime('now', '-24 hours')
         ORDER BY timestamp ASC
@@ -19,7 +19,8 @@ def get_24hr_data():
     return {
         "labels": [row[0] for row in rows],
         "temperatures": [row[1] for row in rows],
-        "humidities": [row[2] for row in rows]
+        "humidities": [row[2] for row in rows],
+        "outdoor_temps": [row[3] for row in rows]
     }
 
 @app.route('/')

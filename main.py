@@ -46,16 +46,16 @@ def update_display():
                                 symbol = "°C"
                         pressure = read_sensor_data()['pressure']
                         humidity = read_sensor_data()['humidity']
-
-                        # Log data to database
-                        log_to_db(temperature, humidity)
-
+                
                         weather_data = get_weather_data()
                         weather_temp = weather_data.get("temperature")
                         weather_high = weather_data.get("high")
                         weather_low = weather_data.get("low")
                         weather_conditions = weather_data.get("conditions", "Unavailable")
-        
+
+                        # Log data to database
+                        log_to_db(temperature, humidity, weather_temp)
+
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255) # Blank black canvas
                         draw_red.rectangle((0, 0, epd.height, epd.width), fill=255) # Blank red canvas
@@ -107,15 +107,24 @@ def update_display():
                         # Put screen to sleep and wait to run again
                         epd.sleep()
 
-def log_to_db(temp, humidity):
-    conn = sqlite3.connect('climate_data.db')
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO readings (temperature, humidity) VALUES (?, ?)", 
-        (temp, humidity)
-    )
-    conn.commit()
-    conn.close()
+def log_to_db(indoor_temp, humidity, outdoor_temp=None):
+        conn = sqlite3.connect('climate_data.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+                CREATE TABLE IF NOT EXISTS readings (
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                temperature REAL,
+                humidity REAL,
+                outdoor_temp REAL
+                )
+        ''')
+
+        cursor.execute(
+                "INSERT INTO readings (temperature, humidity, outdoor_temp) VALUES (?, ?, ?)",
+                (indoor_temp, humidity, outdoor_temp)
+                )
+        conn.commit()
+        conn.close()
 
 while True:
         update_display()
