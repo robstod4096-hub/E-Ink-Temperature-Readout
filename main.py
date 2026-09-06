@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import tomllib
+import sqlite3
 from gpiozero import Button
 from PIL import Image, ImageDraw, ImageFont
 from bme280_sensor import read_sensor_data
@@ -20,7 +21,7 @@ image_black = Image.new('1', (epd.height, epd.width), 255)
 image_red = Image.new('1', (epd.height, epd.width), 255)
 draw_black = ImageDraw.Draw(image_black)
 draw_red = ImageDraw.Draw(image_red)
-font = ImageFont.truetype("11S01BlackTuesday-6yYD.ttf", 40)
+font = ImageFont.truetype("fonts/11S01BlackTuesday-6yYD.ttf", 40)
 
 # Initialize button on pin 36 (GPIO 16)
 button = Button(16)
@@ -46,6 +47,9 @@ def update_display():
                         pressure = read_sensor_data()['pressure']
                         humidity = read_sensor_data()['humidity']
 
+                        # Log data to database
+                        log_to_db(temperature, humidity)
+
                         weather_data = get_weather_data()
                         weather_temp = weather_data.get("temperature")
                         weather_high = weather_data.get("high")
@@ -53,9 +57,10 @@ def update_display():
                         weather_conditions = weather_data.get("conditions", "Unavailable")
         
                         # Draw data on canvas
-                        draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw_black.rectangle((124, 0, 125, 105), fill=0) # Divider line
-                        draw_black.rectangle((0, 85, epd.height, 86), fill=0)
+                        draw_black.rectangle((0, 0, epd.height, epd.width), fill=255) # Blank black canvas
+                        draw_red.rectangle((0, 0, epd.height, epd.width), fill=255) # Blank red canvas
+                        draw_black.rectangle((124, 0, 125, 105), fill=0) # Middle Divider line
+                        draw_black.rectangle((0, 85, epd.height, 86), fill=0) # Top bar
                         draw_black.rectangle((0, 105, epd.height, 106), fill=0) # Bottom bar
 
                         # Left Side: Temperature, Pressure, Humidity
@@ -70,15 +75,24 @@ def update_display():
                         # Right Side: Outdoor Conditions
                         if weather_temp is not None:
                                 draw_red.text((135, 5), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
-                        draw_black.text((135, 60), f"{weather_conditions}", fill=0)
+                        else:
+                                draw_red.text((135, 5), "N/A", fill=0, font=font)
+                        if weather_conditions is not None:
+                                draw_black.text((135, 60), f"{weather_conditions}", fill=0)
+                        else:
+                                draw_black.text((135, 60), "Unavailable", fill=0)
                         if weather_high is not None:
                                 draw_black.text((135, 70), f"H: {weather_high:.0f} {symbol}", fill=0)
+                        else:
+                                draw_black.text((135, 70), "H: N/A", fill=0)
                         if weather_low is not None:
                                 draw_black.text((185, 70), f"L: {weather_low:.0f} {symbol}", fill=0)
+                        else:
+                                draw_black.text((185, 70), "L: N/A", fill=0)
                         draw_red.text((135, 90), "Outdoors", fill=0)
 
                         # Button Prompt
-                        draw_black.text((5, 110), "Displaying old data. Hold button to update.", fill=0)
+                        draw_black.text((5, 110), "Displaying old data.  Hold button to update.", fill=0)
 
                         # Rotate canvas from portrait to landscape
                         image_black_rotated = image_black.rotate(90, expand=True)
@@ -92,6 +106,16 @@ def update_display():
         
                         # Put screen to sleep and wait to run again
                         epd.sleep()
+
+def log_to_db(temp, humidity):
+    conn = sqlite3.connect('climate_data.db')
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO readings (temperature, humidity) VALUES (?, ?)", 
+        (temp, humidity)
+    )
+    conn.commit()
+    conn.close()
 
 while True:
         update_display()

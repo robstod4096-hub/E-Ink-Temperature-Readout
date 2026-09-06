@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pi Climate Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .chart-container { margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <h2>24-Hour Climate Dashboard</h2>
+    <div class="chart-container">
+        <canvas id="tempChart"></canvas>
+    </div>
+
+    <script>
+        async function loadChartData() {
+            const response = await fetch('/api/data');
+            const data = await response.json();
+
+            new Chart(document.getElementById('tempChart'), {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Temperature (°F)',
+                            data: data.temperatures,
+                            borderColor: 'rgb(255, 99, 132)',
+                            tension: 0.2
+                        },
+                        {
+                            label: 'Humidity (%)',
+                            data: data.humidities,
+                            borderColor: 'rgb(54, 162, 235)',
+                            tension: 0.2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { display: true, title: { display: true, text: 'Time' } }
+                    }
+                }
+            });
+        }
+        loadChartData();
+    </script>
+</body>
+</html>
