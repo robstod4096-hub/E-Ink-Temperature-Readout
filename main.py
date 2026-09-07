@@ -31,7 +31,6 @@ font = ImageFont.truetype("fonts/11S01BlackTuesday-6yYD.ttf", 40)
 # Initialize button on pin 36 (GPIO 16)
 button = Button(16)
 
-
 def update_display():
                         print("\nUpdating display...")
 

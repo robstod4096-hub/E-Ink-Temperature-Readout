@@ -11,4 +11,4 @@ latitude = 40.2338
 longitude = -111.6585
 
 [device]
-display = epd2in13b_V4
+display = "epd2in13b_V4"
