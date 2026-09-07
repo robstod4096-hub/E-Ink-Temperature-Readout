@@ -20,14 +20,13 @@ This project reads local room temperature data and pulls weather conditions for 
 ## Setup and Install
 1. Clone the E-Ink display drivers from the Waveshare repository:
    https://github.com/waveshareteam/e-Paper/tree/master/RaspberryPi_JetsonNano/python
-2. Copy or configure the correct display driver in `config.toml` for your specific E-Ink model.
+2. Copy or configure the correct display driver in `main.py` for your specific E-Ink model.
 3. Install dependencies required by `main.py`, `app.py`, and the I2C/SPI hardware stack.
 4. Ensure Python packages for the display and sensors are installed.
 5. Update `config.toml`
 
 ## Configuration
 Edit `config.toml` to change the following:
-- display model
 - location
 - refresh rate
 - temperature units (`C` or `F`)
