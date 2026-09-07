@@ -1,22 +1,36 @@
-# E-Ink-Tempurature-Readout
-A simple project that displays the room tempurature and and the outside weather.
+## Overview
+This project reads local room temperature data and pulls weather conditions for a configured location, then renders the information on a low-power e-paper display. It also displays a graph of the last 24 hours on a web interface. It is designed for continuous monitoring in a home, office, or workshop.
 
-**To set up BME280:**
-- Run "sudo raspi-config"
-- Select interface options
-- Select and enable I2C
-- Reboot the pi
-- Run "sudo i2cdetect -y 1"
-- Verify that the BME280 sensor address is 0x76
-- If not change the variable in bme280_sensor.py
+## Features
+- Displays indoor temperature
+- Displays outdoor temperature and weather information
+- Uses a low-power E-Ink display for easy readability
+- Runs on Raspberry Pi Zero 2 W
+- Configurable via `config.toml`
+- Supports SPI/I2C-related peripherals used by the display and sensors
+- Logs temperature data and displays it via a web interface
 
-**To set up MH-ET LIVE E-ink display:**
-- Run "sudo raspi-config"
-- Select interface options
-- Select and enable SPIimport os
-- Reboot the pi
-- Run "sudo apt update", "sudo apt install -y git python3-pip python3-pil python3-numpy", "sudo pip3 install rpi.gpio spidev --break-system-packages"
-- Run "git clone https://github.com/waveshareteam/e-Paper/tree/master/RaspberryPi_JetsonNano/python"
-- Run "cd e-Paper/RaspberryPi_JetsonNano/python"
-- Move test_epd.py into this directory
-- Run test_epd.py to test the screen
+## Hardware Requirements
+- Raspberry Pi (or compatible single-board computer)
+- E-Ink display module
+- Temperature sensor
+- Wiring for SPI/I2C as required by your display and sensor setup
+- Stable power supply
+
+## Setup and Install
+1. Clone the E-Ink display drivers from the Waveshare repository:
+   https://github.com/waveshareteam/e-Paper/tree/master/RaspberryPi_JetsonNano/python
+2. Copy or configure the correct display driver in `config.toml` for your specific E-Ink model.
+3. Install dependencies required by `main.py`, `app.py`, and the I2C/SPI hardware stack.
+4. Ensure Python packages for the display and sensors are installed.
+5. Update `config.toml`
+
+## Configuration
+Edit `config.toml` to change the following:
+- display model
+- location
+- refresh rate
+- temperature units (`C` or `F`)
+
+## Running the Project
+Set up main.py and app.py as systemd services so they can run simultaneously.

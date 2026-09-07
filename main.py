@@ -8,13 +8,18 @@ from PIL import Image, ImageDraw, ImageFont
 from bme280_sensor import read_sensor_data
 from weather_api import get_weather_data
 
+# Open config file
+with open("config.toml", "rb") as f:
+    data = tomllib.load(f)
+
 # Point Python to the 'lib' folder inside the cloned repo
 sys.path.append(os.path.join(os.path.dirname(__file__), 'e-Paper/RaspberryPi_JetsonNano/python/lib'))
-from waveshare_epd import epd2in13b_V4
+display = data["device"]["display"]
+from waveshare_epd import display
 
 # Initialize the display
 print("Initializing display...")
-epd = epd2in13b_V4.EPD()
+epd = display.EPD()
 
 # Prepare canvas for drawing
 image_black = Image.new('1', (epd.height, epd.width), 255)
@@ -26,9 +31,6 @@ font = ImageFont.truetype("fonts/11S01BlackTuesday-6yYD.ttf", 40)
 # Initialize button on pin 36 (GPIO 16)
 button = Button(16)
 
-# Open config file
-with open("config.toml", "rb") as f:
-    data = tomllib.load(f)
 
 def update_display():
                         print("\nUpdating display...")
@@ -67,26 +69,35 @@ def update_display():
                         if temperature >= 80:
                                 draw_red.text((20, 5), f"{temperature:.0f} {symbol}", fill=0, font=font)
                         else:
-                                draw_black.text((20, 10), f"{temperature:.0f} {symbol}", fill=0, font=font)
+                                draw_black.text((20, 5), f"{temperature:.0f} {symbol}", fill=0, font=font)
                         draw_black.text((5, 60), f"Humidity: {humidity:.2f} %", fill=0)
                         draw_black.text((5, 70), f"Pressure: {pressure:.2f} hPa", fill=0)
                         draw_red.text((5, 90), "Indoors", fill=0)
 
                         # Right Side: Outdoor Conditions
                         if weather_temp is not None:
-                                draw_red.text((135, 5), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
+                                if weather_temp >= 80:
+                                        draw_red.text((135, 5), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
+                                else:
+                                        draw_black.text((135, 5), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
                         else:
-                                draw_red.text((135, 5), "N/A", fill=0, font=font)
+                                draw_black.text((135, 5), "N/A", fill=0, font=font)
                         if weather_conditions is not None:
                                 draw_black.text((135, 60), f"{weather_conditions}", fill=0)
                         else:
                                 draw_black.text((135, 60), "Unavailable", fill=0)
                         if weather_high is not None:
-                                draw_black.text((135, 70), f"H: {weather_high:.0f} {symbol}", fill=0)
+                                if weather_high >= 80:
+                                        draw_red.text((135, 70), f"H: {weather_high:.0f} {symbol}", fill=0)
+                                else:
+                                        draw_black.text((135, 70), f"H: {weather_high:.0f} {symbol}", fill=0)
                         else:
                                 draw_black.text((135, 70), "H: N/A", fill=0)
                         if weather_low is not None:
-                                draw_black.text((185, 70), f"L: {weather_low:.0f} {symbol}", fill=0)
+                                if weather_low >= 80:
+                                        draw_red.text((185, 70), f"L: {weather_low:.0f} {symbol}", fill=0)
+                                else:
+                                        draw_black.text((185, 70), f"L: {weather_low:.0f} {symbol}", fill=0)
                         else:
                                 draw_black.text((185, 70), "L: N/A", fill=0)
                         draw_red.text((135, 90), "Outdoors", fill=0)
