@@ -14,12 +14,11 @@ with open("config.toml", "rb") as f:
 
 # Point Python to the 'lib' folder inside the cloned repo
 sys.path.append(os.path.join(os.path.dirname(__file__), 'e-Paper/RaspberryPi_JetsonNano/python/lib'))
-display = data["device"]["display"]
-from waveshare_epd import display
+from waveshare_epd import epd2in13b_V4
 
 # Initialize the display
 print("Initializing display...")
-epd = display.EPD()
+epd = epd2in13b_V4.EPD()
 
 # Prepare canvas for drawing
 image_black = Image.new('1', (epd.height, epd.width), 255)
